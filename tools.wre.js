@@ -100,13 +100,10 @@ Template.messagebuilder.events({
 			\r\n\
 			We look forward to your order. Please let us know if you have any questions.";
 
-
 			Session.set('message',msg);
 			console.log(msg);
-
 			}
 		}
-
 	});
 }
 
