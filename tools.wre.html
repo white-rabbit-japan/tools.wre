@@ -1,13 +1,5 @@
 
 	<body>
-<script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js?ver=2.0.3'></script>
-		<script type='text/javascript' src='money.min.js'></script>
-		<script type='text/javascript' src='zeroclipboard/ZeroClipboard.min.js'></script>
-		<script type='text/javascript' src='bootstrap/js/bootstrap.min.js'></script>
-
-		<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="./bootstrap/css/bootstrap-responsive.min.css">
-
 		<div class="navbar navbar-inverse" style="position: static;">
 			<div class="navbar-inner">
 				<div class="container">
@@ -33,13 +25,13 @@
 
 		<form id="form">
 			<fieldset>
-				<legend>In</legend>
+				<legend>Service Details</legend>
 				<label for="case">Case #ID</label>
 				<input type="text" id="case" name="case">
 				<label for="num">Number of packages consolidated</label>
 				<input type="text" id="num" name="num">
 
-				<legend>Out</legend>
+				<legend>Shipment Details</legend>
 				<label for="weight">Package weight (g)</label>
 				<input type="text" id="weight" name="weight">
 				<label for="ems">EMS (¥)</label>
@@ -51,12 +43,14 @@
 				<label for="cod">COD ($)</label>
 
 				<input type="text" id="cod" name="cod" value="0">
+				<input type='button'  class='build' value="Generate Reply"/><BR>
 
-				<input type='button' class='build' value="Generate Reply"/>
+			{{#if message}}
+				<textarea rows="20" type="text" id="{{_id}}" class="msg">{{message}}</textarea>
+			{{/if}}
+
+
 			</fieldset>
 		</form>
 
-		 {{#if message}}
-				<div class="msg">message: {{message}}</div>
-			{{/if}}
 </template>
