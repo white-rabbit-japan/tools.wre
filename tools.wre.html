@@ -1,56 +1,50 @@
-
-	<body>
-		<div class="navbar navbar-inverse" style="position: static;">
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".navbar-inverse-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<a class="brand" href="/">WRE Toolbox</a>
-					<div class="nav-collapse navbar-inverse-collapse collapse" style="height: 0;">
-						<ul class="nav">
-							<li class="active"><a href="/">Shipping</a></li>
-							<li class="active"><a href="/currency.html">Currency</a></li>
-						</ul>
-					</div>
+<body>
+	<div class="navbar navbar-inverse" style="position: static;">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".navbar-inverse-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="/">WRE Toolbox</a>
+				<div class="nav-collapse navbar-inverse-collapse collapse" style="height: 0;">
+					<ul class="nav">
+						<li class="active"><a href="/">Shipping</a></li>
+						<li class="active"><a href="/currency.html">Currency</a></li>
+					</ul>
 				</div>
 			</div>
 		</div>
-		{{> messagebuilder}}
-		</body>
+	</div>
+	{{> messagebuilder}}
+</body>
 
-	<template name="messagebuilder">
+<template name="messagebuilder">
+	<form id="form">
+		<fieldset>
+			<legend>Service Details</legend>
+			<label for="case">Case #ID</label>
+			<input type="text" id="case" name="case">
+			<label for="num">Number of packages consolidated</label>
+			<input type="text" id="num" name="num">
 
-		<form id="form">
-			<fieldset>
-				<legend>Service Details</legend>
-				<label for="case">Case #ID</label>
-				<input type="text" id="case" name="case">
-				<label for="num">Number of packages consolidated</label>
-				<input type="text" id="num" name="num">
+			<legend>Shipment Details</legend>
+			<label for="weight">Package weight (g)</label>
+			<input type="text" id="weight" name="weight">
+			<label for="ems">EMS (¥)</label>
+			<input type="text" id="ems" name="ems">
+			<label for="air">AIR (¥)</label>
+			<input type="text" id="air" name="air">
+			<label for="sal">SAL (¥)</label>
+			<input type="text" id="sal" name="sal">
+			<label for="cod">COD ($)</label>
 
-				<legend>Shipment Details</legend>
-				<label for="weight">Package weight (g)</label>
-				<input type="text" id="weight" name="weight">
-				<label for="ems">EMS (¥)</label>
-				<input type="text" id="ems" name="ems">
-				<label for="air">AIR (¥)</label>
-				<input type="text" id="air" name="air">
-				<label for="sal">SAL (¥)</label>
-				<input type="text" id="sal" name="sal">
-				<label for="cod">COD ($)</label>
-
-				<input type="text" id="cod" name="cod" value="0">
-				<input type='button'  class='build' value="Generate Reply"/><BR>
-
+			<input type="text" id="cod" name="cod" value="0">
+			<input type='button'  class='build' value="Generate Reply"/><BR>
 			{{#if message}}
 				<textarea rows="20" type="text" id="{{_id}}" class="msg">{{message}}</textarea>
 			{{/if}}
-
-
-			</fieldset>
-		</form>
-
+		</fieldset>
+	</form>
 </template>
