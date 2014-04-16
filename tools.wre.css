@@ -17,3 +17,10 @@ textarea[type="text"]{
 	margin:5px;
 	text-align:center;
 }
+
+a:hover, a.hover {
+	cursor: pointer;
+}
+a:active, a.active {
+	cursor: pointer;
+}

@@ -1,53 +1,38 @@
 if (Meteor.isClient) {
 
-var exchangeRate;
-$.getJSON(
-	// NB: using Open Exchange Rates here, but you can use any source!
-	'http://openexchangerates.org/api/latest.json?app_id=83970dad8a034394ba786de73e695903',
-	function(data) {
-	// Check money.js has finished loading:
-	if ( typeof fx !== "undefined" && fx.rates ) {
-		fx.rates = data.rates;
-		fx.base = data.base;
-	} else {
-			// If not, apply to fxSetup global:
-			var fxSetup = {
-				rates : data.rates,
-				base : data.base
+	var exchangeRate
+		, clipboard;
+
+	Meteor.startup(function(){
+		$.getJSON(
+			// NB: using Open Exchange Rates here, but you can use any source!
+			'http://openexchangerates.org/api/latest.json?app_id=83970dad8a034394ba786de73e695903',
+			function(data) {
+			// Check money.js has finished loading:
+			if ( typeof fx !== "undefined" && fx.rates ) {
+				fx.rates = data.rates;
+				fx.base = data.base;
+			} else {
+					// If not, apply to fxSetup global:
+					var fxSetup = {
+						rates : data.rates,
+						base : data.base
+					}
+				}
+				exchangeRate = fx.convert(1, {from: "USD", to: "JPY"});
+				exchangeRate /= 1.01;
+				console.log("Exchange rate: "+exchangeRate);
 			}
-		}
-		exchangeRate = fx.convert(1, {from: "USD", to: "JPY"});
-		exchangeRate /= 1.01;
-		console.log("Exchange rate: "+exchangeRate);
-	}
-);
+		);
+	});
 
-/*
-Template.message.rendered = function() {
-     $('#' + this.data._id).zclip({
-           path:"http://www.steamdev.com/zclip/js/ZeroClipboard.swf",
-           copy:this.data.name
-       });
-    }
- */   
-
-Template.messagebuilder.message = function () {
-	msg = Session.get("message");
-	return msg;
-};
-
-
-Template.messagebuilder.events({
-	'click input.build': function () {
-		console.log('click');
+	function generateMessage(){
 		var CONSOLIDATION_FEE = 4;
-		
-		var error = 0;
+			
 		if(!$("#case").val().length||!$("#num").val().length||!$("#weight").val().length){
-			error = 1;
-		}
-		if(!error)
-		{
+			Session.set('error', true);
+		}else{
+			Session.set('error', false);
 			var caseID = $("#case").val();
 			var weightTiers = {1:6.50,3:13.00,5:21.00,10:26.50,20:40.00,30.1:52.00};
 			var packageWeight = Number(($("#weight").val())/1000);
@@ -100,16 +85,32 @@ Template.messagebuilder.events({
 			\r\n\
 			We look forward to your order. Please let us know if you have any questions.";
 
-			Session.set('message',msg);
-			console.log(msg);
+			// clipBoard.setText(msg);
+
+			Session.set('message', msg);
+		}
+	}
+
+	Template.MessageBuilder.rendered = function () {
+		ZeroClipboard.config( { moviePath: '/ZeroClipboard.swf' } );
+		clipboard = new ZeroClipboard(
+			$("#generate-reply")
+		);
+		clipboard.on( 'dataRequested', function (client, args) {
+			generateMessage();
+			if(Session.get('error') === false){
+				clipboard.setText( Session.get('message') );
 			}
+		});
+	};
+
+	Template.MessageBuilder.helpers({
+		message: function () {
+			return Session.get("message");
+		}
+		, error: function(){
+			return Session.get('error');
 		}
 	});
-}
 
-if (Meteor.isServer) {
-	Meteor.startup(function () {
-		/*console.log('startup');*/
-
-	});
 }
