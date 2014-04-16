@@ -1,0 +1,167 @@
+<script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js?ver=2.0.3'></script>
+<script type='text/javascript' src='money.min.js'></script>
+<script type='text/javascript' src='zeroclipboard/ZeroClipboard.min.js'></script>
+<script type='text/javascript' src='bootstrap/js/bootstrap.min.js'></script>
+
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="./bootstrap/css/bootstrap-responsive.min.css">
+
+<style>
+input[type="text"]{
+	width:100%;
+	height:30px;
+	font-size:20px;
+}
+#form{
+	max-width:500px;
+	margin:0 auto;
+	padding:20px;
+}
+#msg{
+	margin:5px;
+	text-align:center;
+}
+</style>
+
+<div class="navbar navbar-inverse" style="position: static;">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".navbar-inverse-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+			<a class="brand" href="/">oldWRE Toolbox</a>
+			<div class="nav-collapse navbar-inverse-collapse collapse" style="height: 0;">
+				<ul class="nav">
+					<li class="active"><a href="/">Shipping</a></li>
+					</li>
+					<li class="active"><a href="/currency.html">Currency</a></li>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="form">
+	<fieldset>
+		<legend>In</legend>
+		<label for="case">Case #ID</label>
+		<input type="text" id="case" name="case">
+		<label for="num">Number of packages consolidated</label>
+		<input type="text" id="num" name="num">
+
+		<legend>Out</legend>
+		<label for="weight">Package weight (g)</label>
+		<input type="text" id="weight" name="weight">
+		<label for="ems">EMS (¥)</label>
+		<input type="text" id="ems" name="ems">
+		<label for="air">AIR (¥)</label>
+		<input type="text" id="air" name="air">
+		<label for="sal">SAL (¥)</label>
+		<input type="text" id="sal" name="sal">
+		<label for="cod">COD ($)</label>
+		<input type="text" id="cod" name="cod" value="0">
+
+		<div id="msg" class="label"></div>
+
+		<div id="generate" class="btn btn-inverse btn-block">Generate reply</div>
+	</fieldset>
+</form>
+
+<script>
+	var CONSOLIDATION_FEE = 4;
+
+	ZeroClipboard.setDefaults();
+	var clip = new ZeroClipboard($("#generate"));
+
+	//exchange rates
+	var exchangeRate;
+	$.getJSON(
+			// NB: using Open Exchange Rates here, but you can use any source!
+				'http://openexchangerates.org/api/latest.json?app_id=83970dad8a034394ba786de73e695903',
+				function(data) {
+						// Check money.js has finished loading:
+						if ( typeof fx !== "undefined" && fx.rates ) {
+								fx.rates = data.rates;
+								fx.base = data.base;
+						} else {
+								// If not, apply to fxSetup global:
+								var fxSetup = {
+										rates : data.rates,
+										base : data.base
+								}
+						}
+						exchangeRate = fx.convert(1, {from: "USD", to: "JPY"});
+						exchangeRate /= 1.01;
+						console.log("Exchange rate: "+exchangeRate);
+				}
+		);
+	clip.on('dataRequested', function (client, args) {
+		var error = 0;
+		if(!$("#case").val().length||!$("#num").val().length||!$("#weight").val().length){
+				error = 1;
+			}
+		if(!error)
+		{
+			var caseID = $("#case").val();
+			var weightTiers = {1:6.50,3:13.00,5:21.00,10:26.50,20:40.00,30.1:52.00};
+			var packageWeight = Number(($("#weight").val())/1000);
+			var serviceFee;
+			for (var tier in weightTiers) {
+				if(packageWeight < tier)
+				{
+					serviceFee = weightTiers[tier];
+					break;
+				}
+			};
+			var registeredSAL = Number($("#sal").val())/exchangeRate;
+			var registeredAir = Number($("#air").val())/exchangeRate;
+			var registeredEMS = Number($("#ems").val())/exchangeRate;
+			var packagesConsolidated = Number($("#num").val());
+			var CODFee = Number($("#cod").val());
+			var consolidationFee = (packagesConsolidated-1)*CONSOLIDATION_FEE;
+			var registeredSalTotal = registeredSAL + consolidationFee + serviceFee + CODFee;
+			var registeredAirTotal = registeredAir + consolidationFee + serviceFee + CODFee;
+			var registeredEMSTotal = registeredEMS + consolidationFee + serviceFee + CODFee;
+			var msg = "Dear {{customer.first_name}},\r\n\
+\r\n\
+Thank you for your reply.\r\n\
+\r\n\
+Here is a quote for the shipping and our service fee.\r\n\
+\r\n\
+=SHIPPING OPTIONS=\r\n\
+-Shipping by Registered SAL (about 2-4 weeks with package number): US$ "+registeredSAL.toFixed(2)+"\r\n\
+-Shipping by Registered Airmail (about 7 to 10 days with package number): US$ "+registeredAir.toFixed(2)+"\r\n\
+-Shipping by EMS (about 5 days with tracking and insurance): US$ "+registeredEMS.toFixed(2)+"\r\n\
+\r\n\
+=FEES=\r\n\
+-Our service fee: US$"+serviceFee.toFixed(2)+"\r\n\
+-Package weight: "+packageWeight+"kg\r\n\
+\r\n\
+-Packages consolidated: "+packagesConsolidated+"\r\n\
+-Package Consolidation Fee: US$"+consolidationFee.toFixed(2)+"\r\n\
+\r\n\
+=Total=\r\n\
+-by Registered SAL: US$"+registeredSalTotal.toFixed(2)+"\r\n\
+-by Registered Airmail: US$"+registeredAirTotal.toFixed(2)+"\r\n\
+-by EMS: US$"+registeredEMSTotal.toFixed(2)+"\r\n\
+\r\n\
+=Payment=\r\n\
+Please remit payment using one of the following links:\r\n\
+\r\n\
+-For shipping by Registered SAL, use this link: http://shop.whiterabbitjapan.com/checkout/cart/add?product=248&qty=1&options[29]="+caseID+"&options[181]=Registered%20SAL&custom_price="+registeredSalTotal.toFixed(2)+"\r\n\
+-For shipping by Registered Airmail, use this link: http://shop.whiterabbitjapan.com/checkout/cart/add?product=248&qty=1&options[29]="+caseID+"&options[181]=Registered%20Airmail&custom_price="+registeredAirTotal.toFixed(2)+"\r\n\
+-For shipping by EMS, use this link: http://shop.whiterabbitjapan.com/checkout/cart/add?product=248&qty=1&options[29]="+caseID+"&options[181]=EMS&custom_price="+registeredEMSTotal.toFixed(2)+"\r\n\
+\r\n\
+We look forward to your order. Please let us know if you have any questions.";
+			$("#msg").removeClass('label-important').addClass('label-success').removeClass('').html("Message copied to clipboard.");
+			clip.setText(msg);
+		}
+		else
+		{
+			$("#msg").removeClass('label-success').addClass('label-important').html("Please enter the case, consoldation number and weight.");
+		}
+	});
+</script>
