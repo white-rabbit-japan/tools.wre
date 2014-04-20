@@ -17,10 +17,10 @@
 			</div>
 		</div>
 	</div>
-	{{> messagebuilder}}
+	{{> MessageBuilder}}
 </body>
 
-<template name="messagebuilder">
+<template name="MessageBuilder">
 	<form id="form">
 		<fieldset>
 			<legend>Service Details</legend>
@@ -41,10 +41,15 @@
 			<label for="cod">COD ($)</label>
 
 			<input type="text" id="cod" name="cod" value="0">
-			<input type='button'  class='build' value="Generate Reply"/><BR>
-			{{#if message}}
-				<textarea rows="20" type="text" id="{{_id}}" class="msg">{{message}}</textarea>
+			<input type='button' id="generate-reply" class='btn btn-inverse btn-block' value="Generate Reply"/>
+			<br><br>
+			{{#if error}}
+				<label class="label label-warning">Please enter the case number, number of packages and weight.</label>
 			{{/if}}
+			{{#if message}}
+				<label class="label label-success">Message copied to clipboard.</label>
+			{{/if}}
+			<textarea rows="20" type="text" id="generated-reply" class="msg">{{message}}</textarea>
 		</fieldset>
 	</form>
 </template>
