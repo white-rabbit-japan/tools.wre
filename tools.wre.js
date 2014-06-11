@@ -79,13 +79,14 @@ if (Meteor.isClient) {
 			=Payment=\r\n\
 			Please remit payment using one of the following links:\r\n\
 			\r\n\
-			-For shipping by Registered SAL, use this link: http://shop.whiterabbitjapan.com/checkout/cart/add?product=248&qty=1&options[29]="+caseID+"&options[181]=Registered%20SAL&custom_price="+registeredSalTotal.toFixed(2)+"\r\n\
-			-For shipping by Registered Airmail, use this link: http://shop.whiterabbitjapan.com/checkout/cart/add?product=248&qty=1&options[29]="+caseID+"&options[181]=Registered%20Airmail&custom_price="+registeredAirTotal.toFixed(2)+"\r\n\
-			-For shipping by EMS, use this link: http://shop.whiterabbitjapan.com/checkout/cart/add?product=248&qty=1&options[29]="+caseID+"&options[181]=EMS&custom_price="+registeredEMSTotal.toFixed(2)+"\r\n\
+			-For shipping by Registered SAL, use this link: http://wretest.myshopify.com/cart/792430561:"+consolidationFee*100+",676496117:"+registeredSAL.toFixed(2)*100+"?note=caseid%20"+caseID+"%0AShipping%20Method=Registered%20SAL&ref=wrepf"+"\r\n\
+			-For shipping by Registered Airmail, use this link: http://wretest.myshopify.com/cart/792430561:"+consolidationFee*100+",676496117:"+registeredAir.toFixed(2)*100+"?note=caseid%20"+caseID+"%0AShipping%20Method=Registered%20Airmail&ref=wrepf"+"\r\n\
+			-For shipping by Registered EMS, use this link: http://wretest.myshopify.com/cart/792430561:"+consolidationFee*100+",676496117:"+registeredEMS.toFixed(2)*100+"?note=caseid%20"+caseID+"%0AShipping%20Method=EMS&ref=wrepf"+"\r\n\
 			\r\n\
 			We look forward to your order. Please let us know if you have any questions.";
 
 			// clipBoard.setText(msg);
+//-For shipping by Registered SAL, use this link: http://wretest.myshopify.com/cart/792430561:"+consolidationFee+",676496117:"+(registeredSalTotal*100)+"?note=caseid%20"+caseID+"&ref=wrepf+"\r\n\
 
 			Session.set('message', msg);
 		}
