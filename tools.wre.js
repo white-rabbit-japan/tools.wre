@@ -50,9 +50,13 @@ if (Meteor.isClient) {
 			var packagesConsolidated = Number($("#num").val());
 			var CODFee = Number($("#cod").val());
 			var consolidationFee = (packagesConsolidated-1)*CONSOLIDATION_FEE;
-			var registeredSalTotal = registeredSAL + consolidationFee + serviceFee + CODFee;
-			var registeredAirTotal = registeredAir + consolidationFee + serviceFee + CODFee;
-			var registeredEMSTotal = registeredEMS + consolidationFee + serviceFee + CODFee;
+
+			var serviceFeeTotal = serviceFee + CODFee + consolidationFee;
+
+			var registeredSalTotal = registeredSAL + serviceFeeTotal;
+			var registeredAirTotal = registeredAir + serviceFeeTotal;
+			var registeredEMSTotal = registeredEMS + serviceFeeTotal;
+
 			var msg = "Dear {{customer.first_name}},\r\n\
 			\r\n\
 			Thank you for your reply.\r\n\
@@ -79,9 +83,9 @@ if (Meteor.isClient) {
 			=Payment=\r\n\
 			Please remit payment using one of the following links:\r\n\
 			\r\n\
-			-For shipping by Registered SAL, use this link: http://wretest.myshopify.com/cart/792430561:"+consolidationFee*100+",676496117:"+registeredSAL.toFixed(2)*100+"?note=caseid%20"+caseID+"%0AShipping%20Method=Registered%20SAL&ref=wrepf"+"\r\n\
-			-For shipping by Registered Airmail, use this link: http://wretest.myshopify.com/cart/792430561:"+consolidationFee*100+",676496117:"+registeredAir.toFixed(2)*100+"?note=caseid%20"+caseID+"%0AShipping%20Method=Registered%20Airmail&ref=wrepf"+"\r\n\
-			-For shipping by Registered EMS, use this link: http://wretest.myshopify.com/cart/792430561:"+consolidationFee*100+",676496117:"+registeredEMS.toFixed(2)*100+"?note=caseid%20"+caseID+"%0AShipping%20Method=EMS&ref=wrepf"+"\r\n\
+			-For shipping by Registered SAL, use this link: http://wretest.myshopify.com/cart/792430561:"+Math.round(serviceFeeTotal*100)+",676496117:"+Math.round(registeredSAL*100)+"?note=caseid%20"+caseID+"%0AShipping%20Method=Registered%20SAL&ref=wrepf"+"\r\n\
+			-For shipping by Registered Airmail, use this link: http://wretest.myshopify.com/cart/792430561:"+Math.round(serviceFeeTotal*100)+",676496117:"+Math.round(registeredAir*100)+"?note=caseid%20"+caseID+"%0AShipping%20Method=Registered%20Airmail&ref=wrepf"+"\r\n\
+			-For shipping by EMS, use this link: http://wretest.myshopify.com/cart/792430561:"+Math.round(serviceFeeTotal*100)+",676496117:"+Math.round(registeredEMS*100)+"?note=caseid%20"+caseID+"%0AShipping%20Method=EMS&ref=wrepf"+"\r\n\
 			\r\n\
 			We look forward to your order. Please let us know if you have any questions.";
 
